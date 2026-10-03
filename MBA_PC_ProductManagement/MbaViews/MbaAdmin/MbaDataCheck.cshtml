@@ -1,0 +1,210 @@
+@model IEnumerable<MBA_PC_ProductManagement.MbaControllers.MbaAdminCheckRow>
+@{
+    ViewData["Title"] = ViewBag.PageTitle;
+    var pageKey = ViewBag.PageKey as string ?? "MbaReviewData";
+    var employees = ViewBag.MbaEmployees as IEnumerable<MBA_PC_ProductManagement.MbaModels.MbaEmployee> ?? Enumerable.Empty<MBA_PC_ProductManagement.MbaModels.MbaEmployee>();
+    var categories = ViewBag.MbaCategories as IEnumerable<MBA_PC_ProductManagement.MbaModels.MbaCategoryItem> ?? Enumerable.Empty<MBA_PC_ProductManagement.MbaModels.MbaCategoryItem>();
+}
+<div class="admin-check-page">
+    <div class="page-heading">
+        <div>
+            <span class="profile-eyebrow">DATA QUALITY CONTROL</span>
+            <h1 class="page-title">@ViewBag.PageTitle</h1>
+            <p class="page-description">@ViewBag.PageDescription</p>
+        </div>
+        <a asp-controller="MbaAdmin" asp-action="MbaIndex" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Dashboard
+        </a>
+    </div>
+
+    @if (TempData["ReviewAssignmentMessage"] != null)
+    {
+        <div class="alert alert-info mt-3"><i class="bi bi-info-circle me-2"></i>@TempData["ReviewAssignmentMessage"]</div>
+    }
+
+    <div class="check-summary-grid">
+        <a asp-controller="MbaAdmin" asp-action="MbaReviewData" class="check-summary-card @(pageKey=="MbaReviewData"?"active":"")">
+            <span class="check-summary-icon pending"><i class="bi bi-clipboard-check"></i></span>
+            <span><small>Đang cần rà soát</small><strong>@ViewBag.Pending</strong></span>
+        </a>
+        <a asp-controller="MbaAdmin" asp-action="MbaStandardizeData" class="check-summary-card @(pageKey=="MbaStandardizeData"?"active":"")">
+            <span class="check-summary-icon valid"><i class="bi bi-check2-square"></i></span>
+            <span><small>Đã chuẩn hóa</small><strong>@ViewBag.Completed</strong></span>
+        </a>
+        <a asp-controller="MbaAdmin" asp-action="MbaInvalidData" class="check-summary-card @(pageKey=="MbaInvalidData"?"active":"")">
+            <span class="check-summary-icon invalid"><i class="bi bi-exclamation-triangle"></i></span>
+            <span><small>Cần xử lý lại</small><strong>@ViewBag.Invalid</strong></span>
+        </a>
+        <div class="check-summary-card readonly">
+            <span class="check-summary-icon working"><i class="bi bi-pencil-square"></i></span>
+            <span><small>Nhân viên đang xử lý</small><strong>@ViewBag.Reviewing</strong></span>
+        </div>
+    </div>
+
+    @if (pageKey == "MbaReviewData")
+    {
+        <div class="content-card bulk-assignment-card">
+            <div class="bulk-assignment-header">
+                <div>
+                    <span class="bulk-assignment-eyebrow"><i class="bi bi-diagram-3"></i> PHÂN CÔNG THEO NHÓM</span>
+                    <h5>Phân công rà soát hàng loạt</h5>
+                    <p>Không cần chọn từng sản phẩm. Có thể giao toàn bộ một danh mục hoặc chia theo khoảng sản phẩm.</p>
+                </div>
+            </div>
+            <form asp-controller="MbaAdmin" asp-action="MbaBulkAssignReviews" method="post" class="bulk-assignment-form">
+                @Html.AntiForgeryToken()
+                <div class="bulk-form-grid">
+                    <div class="bulk-field">
+                        <label>Nhân viên phụ trách</label>
+                        <select name="employeeId" class="form-select" required>
+                            <option value="">-- Chọn nhân viên --</option>
+                            @foreach (var employee in employees)
+                            {
+                                <option value="@employee.MbaId">@employee.MbaFullName</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="bulk-field">
+                        <label>Phần / danh mục</label>
+                        <select name="categoryId" id="bulkCategory" class="form-select">
+                            <option value="">Tất cả sản phẩm</option>
+                            @foreach (var category in categories)
+                            {
+                                <option value="@category.MbaId">@category.MbaName</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="bulk-field bulk-range-field">
+                        <label>Khoảng sản phẩm <small>(theo STT trong danh mục)</small></label>
+                        <div class="bulk-range-inputs">
+                            <input type="number" name="fromPosition" min="1" class="form-control" placeholder="Từ 1" />
+                            <span>→</span>
+                            <input type="number" name="toPosition" min="1" class="form-control" placeholder="Đến 50" />
+                        </div>
+                    </div>
+                    <div class="bulk-field">
+                        <label>Thời hạn hoàn thành</label>
+                        <input type="datetime-local" name="deadline" class="form-control" value="@DateTime.Now.AddDays(1).ToString("yyyy-MM-ddTHH:mm")" required />
+                        <small class="text-muted">Đến thời điểm này, hệ thống tự khóa và chốt các phiếu chưa hoàn thành.</small>
+                    </div>
+                    <div class="bulk-field bulk-check-field">
+                        <label>&nbsp;</label>
+                        <label class="bulk-check-option">
+                            <input type="checkbox" name="onlyUnassigned" value="true" checked />
+                            <span>Chỉ giao những phiếu chưa có nhân viên</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="bulk-examples">
+                    <span><i class="bi bi-lightbulb"></i> Ví dụ:</span>
+                    <span><b>Nguyễn Minh Anh</b> → <b>Máy tính bộ</b> → toàn bộ phần cây</span>
+                    <span><b>Trần Quốc Huy</b> → <b>Màn hình</b> → sản phẩm <b>1–50</b></span>
+                </div>
+                <div class="bulk-assignment-actions">
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-person-plus me-1"></i>Phân công nhóm này</button>
+                </div>
+            </form>
+        </div>
+    }
+
+    <div class="content-card admin-check-card">
+        <div class="content-card-header">
+            <div>
+                <h5>Danh sách dữ liệu</h5>
+                <p>@Model.Count() bản ghi thuộc khu vực này.</p>
+            </div>
+            <form asp-controller="MbaAdmin" asp-action="@pageKey" method="get" class="check-search">
+                <div class="search-field">
+                    <i class="bi bi-search"></i>
+                    <input class="form-control" name="keyword" value="@ViewBag.Keyword" placeholder="Tìm mã, tên hoặc thương hiệu..." />
+                </div>
+                <button class="btn btn-primary" type="submit">Tìm</button>
+            </form>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="empty-check-state">
+                <div class="empty-check-icon"><i class="bi bi-inbox"></i></div>
+                <h3>Chưa có dữ liệu trong khu vực này</h3>
+                <p>Khi có phiếu phù hợp với trạng thái, dữ liệu sẽ xuất hiện tại đây.</p>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table align-middle admin-check-table">
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Mã SP</th>
+                            <th>Thông tin sản phẩm</th>
+                            <th>Danh mục</th>
+                            <th>Giá</th>
+                            <th>Checklist</th>
+                            <th>Trạng thái</th>
+                            <th>Nhân viên</th>
+                            <th>Thời hạn</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var rowWithIndex in Model.Select((row, index) => new { row, index }))
+                    {
+                        var row = rowWithIndex.row;
+                        var statusClass = row.MbaReview.MbaStatus == "Đã hoàn tất" ? "status-valid" :
+                            row.MbaReview.MbaStatus == "Cần báo lại" ? "status-error" : "status-pending";
+                        <tr>
+                            <td>@(rowWithIndex.index + 1)</td>
+                            <td><span class="product-code">@row.MbaProduct.MbaCode</span></td>
+                            <td>
+                                <div class="check-product-cell">
+                                    <span class="check-product-icon"><i class="bi bi-box-seam"></i></span>
+                                    <div>
+                                        <strong>@row.MbaProduct.MbaName</strong>
+                                        <small>@row.MbaProduct.MbaBrand · @row.MbaProduct.MbaTechnicalInfo</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>@row.MbaProduct.MbaCategory</td>
+                            <td>@(row.MbaProduct.MbaPrice == 0 ? "—" : row.MbaProduct.MbaPrice.ToString("N0") + " ₫")</td>
+                            <td><span class="check-count">@row.MbaReview.MbaCheckedItems/@row.MbaReview.MbaTotalItems</span></td>
+                            <td><span class="data-status @statusClass">@row.MbaReview.MbaStatus</span></td>
+                            <td>
+                                <form asp-controller="MbaAdmin" asp-action="MbaAssignReview" method="post" class="d-flex gap-1">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="reviewId" value="@row.MbaReview.MbaId" />
+                                    <select name="employeeId" class="form-select form-select-sm" style="min-width:150px">
+                                        <option value="">Chọn nhân viên</option>
+                                        @foreach (var employee in employees)
+                                        {
+                                            <option value="@employee.MbaId" selected="@(row.MbaReview.MbaEmployeeId == employee.MbaId)">@employee.MbaFullName</option>
+                                        }
+                                    </select>
+                                    <button class="btn btn-sm btn-outline-primary" type="submit" title="Phân công"><i class="bi bi-person-check"></i></button>
+                                </form>
+                            </td>
+                            <td>
+                                @if (row.MbaReview.MbaDeadline.HasValue)
+                                {
+                                    <span class="small @(row.MbaReview.MbaIsOverdue ? "text-danger fw-semibold" : "")">@row.MbaReview.MbaDeadline.Value.ToString("dd/MM/yyyy HH:mm")</span>
+                                }
+                                else { <span class="text-muted small">Chưa đặt</span> }
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a asp-controller="MbaProducts" asp-action="MbaDetails" asp-route-id="@row.MbaProduct.MbaId" title="Xem sản phẩm"><i class="bi bi-eye"></i></a>
+                                    @if (row.MbaReview.MbaStatus != "Đã hoàn tất")
+                                    {
+                                        <a asp-controller="MbaUser" asp-action="MbaEditData" asp-route-id="@row.MbaReview.MbaId" title="Mở phiếu"><i class="bi bi-pencil-square"></i></a>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

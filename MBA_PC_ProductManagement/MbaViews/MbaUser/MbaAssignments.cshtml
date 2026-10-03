@@ -1,0 +1,66 @@
+@model IEnumerable<MBA_PC_ProductManagement.MbaModels.MbaEmployeeAssignmentRow>
+@{
+    ViewData["Title"] = "Công việc được giao";
+    Layout = "~/MbaViews/MbaUser/_MbaUserLayout.cshtml";
+    var rows = Model.ToList();
+    var nearest = ViewBag.NearestDeadline as DateTime?;
+}
+<section class="content-page review-page">
+<div class="container-fluid px-lg-4">
+    <div class="page-hero review-hero">
+        <div><span class="profile-eyebrow">MY ASSIGNMENTS</span><h1>Công việc được giao</h1><p>Theo dõi số lượng sản phẩm, tiến độ và thời hạn rà soát của chính bạn.</p></div>
+        <span class="page-hero-icon"><i class="bi bi-clipboard2-data"></i></span>
+    </div>
+
+    @if (TempData["ReviewMessage"] != null) { <div class="alert alert-warning review-alert"><i class="bi bi-exclamation-triangle me-2"></i>@TempData["ReviewMessage"]</div> }
+
+    <div class="review-stats">
+        <div class="review-stat"><span class="stat-icon pending"><i class="bi bi-box-seam"></i></span><div><small>Tổng được giao</small><strong>@ViewBag.Total</strong></div></div>
+        <div class="review-stat"><span class="stat-icon checking"><i class="bi bi-pencil-square"></i></span><div><small>Chưa hoàn tất</small><strong>@ViewBag.Open</strong></div></div>
+        <div class="review-stat"><span class="stat-icon done"><i class="bi bi-check2-circle"></i></span><div><small>Đã rà xong</small><strong>@ViewBag.Completed</strong></div></div>
+        <div class="review-stat"><span class="stat-icon invalid"><i class="bi bi-alarm"></i></span><div><small>Chốt quá hạn</small><strong>@ViewBag.Overdue</strong></div></div>
+    </div>
+
+    <div class="content-card mb-4" style="padding:20px;">
+        <div class="d-flex align-items-start gap-3">
+            <div class="mini-product-icon"><i class="bi bi-bell"></i></div>
+            <div>
+                <h5 class="mb-1">Thông báo tiến độ</h5>
+                @if (ViewBag.Total == 0)
+                { <p class="mb-0 text-muted">Hiện chưa có sản phẩm nào được quản lý phân công.</p> }
+                else if (ViewBag.Open == 0 && ViewBag.Overdue == 0)
+                { <p class="mb-0 text-success fw-semibold">Đã rà xong toàn bộ phần việc được giao.</p> }
+                else if (nearest.HasValue)
+                { <p class="mb-0">Phần việc vẫn đang mở. Thời hạn gần nhất: <strong>@nearest.Value.ToString("dd/MM/yyyy HH:mm")</strong>. Đến hạn, hệ thống sẽ tự động khóa phiếu.</p> }
+                else
+                { <p class="mb-0">Một số phiếu đã được hệ thống chốt. Hãy kiểm tra trạng thái từng dòng bên dưới.</p> }
+            </div>
+        </div>
+    </div>
+
+    <div class="review-workspace">
+        <div class="review-toolbar"><div><h2>Danh sách sản phẩm được giao</h2><p>STT được đánh theo thứ tự phần việc của bạn.</p></div></div>
+        <div class="review-table-wrap"><table class="review-table"><thead><tr><th>STT</th><th>Mã SP</th><th>Thông tin</th><th>Danh mục</th><th>Checklist</th><th>Trạng thái</th><th>Thời hạn</th><th>Thao tác</th></tr></thead><tbody>
+        @foreach (var row in rows)
+        {
+            var statusClass = row.MbaStatus == "Đã hoàn tất" ? "completed" : row.MbaStatus == "Đã chốt quá hạn" ? "invalid" : row.MbaStatus == "Cần báo lại" ? "invalid" : row.MbaStatus == "Đang xử lý" ? "working" : "waiting";
+            <tr>
+                <td><strong>@row.Position</strong></td><td><strong>@row.ProductCode</strong></td>
+                <td><div class="review-product"><span class="mini-product-icon"><i class="bi bi-box-seam"></i></span><div><strong>@row.ProductName</strong></div></div></td>
+                <td>@row.MbaCategory</td>
+                <td><span class="check-progress @(row.MbaCheckedItems == row.MbaTotalItems ? "complete" : "")">@row.MbaCheckedItems/@row.MbaTotalItems</span></td>
+                <td><span class="review-badge @statusClass">@row.MbaStatus</span></td>
+                <td>@(row.MbaDeadline.HasValue ? row.MbaDeadline.Value.ToString("dd/MM/yyyy HH:mm") : "Chưa đặt")</td>
+                <td>
+                    @if (row.MbaIsLocked)
+                    { <span class="text-muted small"><i class="bi bi-lock-fill me-1"></i>Đã khóa</span> }
+                    else
+                    { <a asp-controller="MbaUser" asp-action="MbaEditData" asp-route-id="@row.ReviewId" class="btn btn-sm btn-primary">Mở phiếu</a> }
+                </td>
+            </tr>
+        }
+        </tbody></table></div>
+        @if (!rows.Any()) { <div class="empty-check-state"><div class="empty-check-icon"><i class="bi bi-inbox"></i></div><h3>Chưa có phần việc</h3><p>Khi quản lý phân công, sản phẩm sẽ xuất hiện tại đây.</p></div> }
+    </div>
+</div>
+</section>

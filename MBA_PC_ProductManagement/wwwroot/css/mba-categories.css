@@ -1,0 +1,30 @@
+/* Admin category management */
+.categories-page{max-width:100%}
+.category-overview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px;margin-bottom:20px}
+.category-overview-item{display:flex;align-items:center;gap:13px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:17px 19px;box-shadow:0 2px 8px rgba(20,35,60,.025)}
+.category-overview-icon{width:42px;height:42px;border-radius:11px;display:grid;place-items:center;background:#edf4ff;color:#2563eb;font-size:18px;flex:0 0 42px}
+.category-overview-icon.green{background:#eaf9f0;color:#16934b}
+.category-overview-icon.orange{background:#fff3e5;color:#d97706}
+.category-overview-item div{display:flex;flex-direction:column;gap:3px}
+.category-overview-item small{font-size:11px;color:var(--muted)}
+.category-overview-item strong{font-size:20px;font-weight:800;color:#172033}
+.category-management-card{padding:0!important;overflow:hidden}
+.category-management-card .content-card-header{padding:21px 21px 18px;margin:0;border-bottom:1px solid var(--line)}
+.category-management-table{min-width:900px}
+.category-management-table thead th{padding:13px 16px}
+.category-management-table tbody td{padding:15px 16px}
+.category-code-badge{font-size:11px;font-weight:750;color:#475569;background:#f1f5f9;padding:5px 8px;border-radius:7px}
+.category-name-cell{display:flex;align-items:center;gap:10px;min-width:150px}
+.category-table-icon{width:34px;height:34px;border-radius:9px;background:#edf4ff;color:#2563eb;display:grid;place-items:center;flex:0 0 34px}
+.category-name-cell strong{font-size:13px;color:#172033}
+.category-description{display:block;max-width:320px;color:#64748b;font-size:12px;line-height:1.5}
+.product-count-pill{display:inline-flex;padding:5px 9px;border-radius:999px;background:#f1f5f9;color:#475569;font-size:11px;font-weight:700;white-space:nowrap}
+.category-status{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;white-space:nowrap}
+.category-status i{font-size:6px}
+.category-status.active{color:#16803d}.category-status.inactive{color:#94a3b8}
+.category-table-actions{display:flex;gap:6px}
+.category-table-actions a,.category-table-actions button{width:31px;height:31px;border:1px solid var(--line);border-radius:7px;background:#fff;display:grid;place-items:center;color:#64748b;text-decoration:none}
+.category-table-actions a:hover{color:var(--blue);border-color:#9dbbff;background:#f8fbff}
+.category-table-actions button{cursor:pointer;color:#dc2626}
+.category-table-actions button:hover{background:#fff5f5;border-color:#fecaca}
+@media(max-width:850px){.category-overview{grid-template-columns:1fr}.category-overview-item{min-width:0}}

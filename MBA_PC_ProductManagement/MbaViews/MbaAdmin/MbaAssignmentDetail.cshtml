@@ -1,0 +1,119 @@
+@model IEnumerable<MBA_PC_ProductManagement.MbaModels.MbaEmployeeAssignmentRow>
+@{
+    ViewData["Title"] = "Chi tiết phân công";
+    var rows = Model.ToList();
+    var employeeName = ViewBag.EmployeeName as string ?? "Nhân viên";
+    var employeeUsername = ViewBag.EmployeeUsername as string ?? "";
+}
+<section class="admin-check-page">
+    <div class="page-heading">
+        <div>
+            <span class="profile-eyebrow">ASSIGNMENT DETAIL</span>
+            <h1 class="page-title">Chi tiết công việc — @employeeName</h1>
+            <p class="page-description">
+                Kiểm tra chính xác từng sản phẩm nhân viên đã được giao, sản phẩm đã rà xong,
+                sản phẩm đang xử lý, sản phẩm chưa rà và các phiếu đã được hệ thống chốt.
+            </p>
+        </div>
+        <a asp-controller="MbaAdmin" asp-action="MbaAssignmentMonitor" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Quay lại theo dõi phân công
+        </a>
+    </div>
+
+    <div class="check-summary-grid">
+        <div class="check-summary-card readonly">
+            <span class="check-summary-icon working"><i class="bi bi-box-seam"></i></span>
+            <span><small>Tổng được giao</small><strong>@ViewBag.TotalAssigned</strong></span>
+        </div>
+        <div class="check-summary-card readonly">
+            <span class="check-summary-icon valid"><i class="bi bi-check2-circle"></i></span>
+            <span><small>Đã rà &amp; chốt</small><strong>@ViewBag.Completed</strong></span>
+        </div>
+        <div class="check-summary-card readonly">
+            <span class="check-summary-icon pending"><i class="bi bi-pencil-square"></i></span>
+            <span><small>Đang xử lý</small><strong>@ViewBag.InProgress</strong></span>
+        </div>
+        <div class="check-summary-card readonly">
+            <span class="check-summary-icon invalid"><i class="bi bi-alarm"></i></span>
+            <span><small>Quá hạn</small><strong>@ViewBag.Overdue</strong></span>
+        </div>
+    </div>
+
+    <div class="content-card admin-check-card">
+        <div class="content-card-header">
+            <div>
+                <h5>Danh sách sản phẩm đã giao</h5>
+                <p>Tài khoản: <strong>@employeeUsername</strong>. Admin có thể kiểm tra từng dòng để biết chính xác nhân viên đã rà những sản phẩm nào và còn thiếu sản phẩm nào.</p>
+            </div>
+        </div>
+
+        @if (!rows.Any())
+        {
+            <div class="empty-check-state">
+                <div class="empty-check-icon"><i class="bi bi-inbox"></i></div>
+                <h3>Nhân viên chưa được giao sản phẩm</h3>
+                <p>Hãy quay lại trang theo dõi phân công để giao một nhóm hoặc một khoảng sản phẩm.</p>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table align-middle admin-check-table">
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Mã SP</th>
+                            <th>Thông tin sản phẩm</th>
+                            <th>Danh mục</th>
+                            <th>Checklist</th>
+                            <th>Trạng thái rà soát</th>
+                            <th>Thời hạn</th>
+                            <th>Chốt hệ thống</th>
+                            <th>Ghi chú rà soát</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var row in rows)
+                    {
+                        var statusClass = row.MbaStatus == "Đã hoàn tất" ? "status-valid" :
+                            row.MbaStatus == "Cần báo lại" || row.MbaStatus == "Đã chốt quá hạn" ? "status-error" :
+                            row.MbaStatus == "Đang xử lý" ? "status-pending" : "status-pending";
+                        var closeText = row.MbaStatus == "Đã hoàn tất"
+                            ? (row.MbaClosedAt.HasValue ? $"Đã chốt {row.MbaClosedAt.Value:dd/MM/yyyy HH:mm}" : "Đã hoàn tất")
+                            : row.MbaStatus == "Đã chốt quá hạn"
+                                ? (row.MbaClosedAt.HasValue ? $"Chốt quá hạn {row.MbaClosedAt.Value:dd/MM/yyyy HH:mm}" : "Đã chốt quá hạn")
+                                : "Chưa chốt";
+                        <tr>
+                            <td><strong>@row.Position</strong></td>
+                            <td><span class="product-code">@row.ProductCode</span></td>
+                            <td>
+                                <div class="check-product-cell">
+                                    <span class="check-product-icon"><i class="bi bi-box-seam"></i></span>
+                                    <div>
+                                        <strong>@row.ProductName</strong>
+                                        <small>@row.MbaSourceNote</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>@row.MbaCategory</td>
+                            <td><span class="check-count @(row.MbaCheckedItems == row.MbaTotalItems ? "complete" : "")">@row.MbaCheckedItems/@row.MbaTotalItems</span></td>
+                            <td><span class="data-status @statusClass">@row.MbaStatus</span></td>
+                            <td>@(row.MbaDeadline.HasValue ? row.MbaDeadline.Value.ToString("dd/MM/yyyy HH:mm") : "—")</td>
+                            <td>@closeText</td>
+                            <td>@(string.IsNullOrWhiteSpace(row.MbaReviewNote) ? "—" : row.MbaReviewNote)</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+            <div class="review-table-footer">
+                <span>
+                    Đã rà xong: <strong>@ViewBag.Completed</strong> /
+                    @ViewBag.TotalAssigned.
+                    Còn đang xử lý: <strong>@ViewBag.InProgress</strong>.
+                    Chưa rà: <strong>@ViewBag.NotStarted</strong>.
+                </span>
+            </div>
+        }
+    </div>
+</section>

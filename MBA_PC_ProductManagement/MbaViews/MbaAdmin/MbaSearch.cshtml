@@ -1,0 +1,12 @@
+@model IEnumerable<MBA_PC_ProductManagement.MbaModels.MbaProduct>
+@{
+    ViewData["Title"] = "Tìm kiếm dữ liệu";
+}
+<div class="dashboard-page">
+    <div class="page-heading"><div><span class="profile-eyebrow">DATA SEARCH</span><h1 class="page-title">Tìm kiếm dữ liệu</h1><p class="page-description">Tìm nhanh theo mã, tên hoặc thương hiệu sản phẩm.</p></div></div>
+    <form asp-action="MbaSearch" method="get" class="filter-card"><div class="filter-row"><div class="search-field"><i class="bi bi-search"></i><input class="form-control" name="keyword" value="@ViewBag.Keyword" placeholder="Nhập từ khóa..." /></div><button class="btn btn-primary">Tìm kiếm</button></div></form>
+    <div class="content-card"><div class="content-card-header"><div><h5>Kết quả tìm kiếm</h5><p>@Model.Count() bản ghi.</p></div></div>
+    <div class="table-responsive"><table class="table align-middle"><thead><tr><th>Mã</th><th>Sản phẩm</th><th>Danh mục</th><th>Thương hiệu</th><th>Trạng thái</th><th></th></tr></thead><tbody>
+    @foreach(var p in Model){<tr><td>@p.MbaCode</td><td>@p.MbaName</td><td>@p.MbaCategory</td><td>@p.MbaBrand</td><td>@p.MbaDataStatus</td><td><a asp-controller="MbaProducts" asp-action="MbaDetails" asp-route-id="@p.MbaId" class="btn btn-sm btn-outline-primary">Mở</a></td></tr>}
+    </tbody></table></div></div>
+</div>

@@ -1,0 +1,59 @@
+@model IEnumerable<MBA_PC_ProductManagement.MbaModels.MbaEmployeeAssignmentViewModel>
+@{
+    ViewData["Title"] = "Theo dõi phân công";
+    var employees = Model.ToList();
+}
+<section class="admin-check-page">
+    <div class="page-heading">
+        <div>
+            <span class="profile-eyebrow">WORKLOAD MONITORING</span>
+            <h1 class="page-title">Theo dõi phân công rà soát</h1>
+            <p class="page-description">Chỉ cần nhìn một màn hình để biết nhân viên nào đang được giao bao nhiêu sản phẩm, đã hoàn thành bao nhiêu và còn thời hạn đến đâu.</p>
+        </div>
+        <a asp-controller="MbaAdmin" asp-action="MbaReviewData" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Rà soát dữ liệu</a>
+    </div>
+
+    <div class="check-summary-grid">
+        <div class="check-summary-card readonly"><span class="check-summary-icon working"><i class="bi bi-box-seam"></i></span><span><small>Tổng sản phẩm đã giao</small><strong>@ViewBag.TotalAssigned</strong></span></div>
+        <div class="check-summary-card readonly"><span class="check-summary-icon valid"><i class="bi bi-check2-circle"></i></span><span><small>Đã hoàn tất</small><strong>@ViewBag.TotalCompleted</strong></span></div>
+        <div class="check-summary-card readonly"><span class="check-summary-icon invalid"><i class="bi bi-alarm"></i></span><span><small>Đã quá hạn</small><strong>@ViewBag.TotalOverdue</strong></span></div>
+    </div>
+
+    <div class="content-card admin-check-card">
+        <div class="content-card-header">
+            <div><h5>Nhân viên và khối lượng được giao</h5><p>Trạng thái được cập nhật tự động. Khi quá hạn, phiếu sẽ bị khóa và chốt theo trạng thái hoàn thành hoặc quá hạn.</p></div>
+        </div>
+        <div class="table-responsive">
+            <table class="table align-middle admin-check-table">
+                <thead><tr><th>STT</th><th>Nhân viên</th><th>Phần được giao</th><th>Đã giao</th><th>Đã rà xong</th><th>Đang xử lý</th><th>Quá hạn</th><th>Thời hạn gần nhất</th><th>Tình trạng</th><th>Chi tiết</th></tr></thead>
+                <tbody>
+                @for (var i = 0; i < employees.Count; i++)
+                {
+                    var employee = employees[i];
+                    var done = employee.AllCompleted;
+                    var deadlineText = employee.NearestDeadline.HasValue ? employee.NearestDeadline.Value.ToString("dd/MM/yyyy HH:mm") : "—";
+                    var status = employee.TotalAssigned == 0 ? "Chưa được giao" : done ? "Đã rà xong" : employee.Overdue > 0 ? "Có phần quá hạn" : "Đang thực hiện";
+                    var statusClass = done ? "status-valid" : employee.Overdue > 0 ? "status-error" : "status-pending";
+                    <tr>
+                        <td>@(i + 1)</td>
+                        <td><strong>@employee.EmployeeName</strong></td>
+                        <td>@(string.IsNullOrWhiteSpace(employee.AssignedSections) ? "—" : employee.AssignedSections)</td>
+                        <td><span class="check-count">@employee.TotalAssigned</span></td>
+                        <td><span class="check-count">@employee.Completed</span></td>
+                        <td><span class="check-count">@employee.InProgress</span></td>
+                        <td><span class="check-count">@employee.Overdue</span></td>
+                        <td>@deadlineText</td>
+                        <td><span class="data-status @statusClass">@status</span></td>
+                        <td>
+                            <a asp-controller="MbaAdmin" asp-action="MbaAssignmentDetail" asp-route-employeeId="@employee.MbaEmployeeId" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye me-1"></i>Chi tiết
+                            </a>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+        @if (!employees.Any()) { <div class="empty-check-state"><h3>Chưa có nhân viên</h3><p>Hãy tạo nhân viên trước khi phân công dữ liệu.</p></div> }
+    </div>
+</section>

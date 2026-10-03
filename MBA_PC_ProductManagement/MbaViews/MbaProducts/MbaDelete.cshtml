@@ -1,0 +1,41 @@
+@model MBA_PC_ProductManagement.MbaModels.MbaProduct
+@{
+    ViewData["Title"] = "Xóa sản phẩm";
+}
+<div class="page-header">
+    <div>
+        <span class="profile-eyebrow">PRODUCT DATA</span>
+        <h1>Xóa sản phẩm</h1>
+        <p>Xác nhận xóa bản ghi khỏi bộ dữ liệu.</p>
+    </div>
+    <a asp-action="MbaDetails" asp-route-id="@Model.MbaId" class="btn btn-outline-secondary">← Quay lại</a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="content-card text-center">
+            <div class="delete-icon mb-4"><i class="bi bi-trash3"></i></div>
+            <h2 class="fw-bold mb-2">Xác nhận xóa sản phẩm?</h2>
+            <p class="text-muted mb-4">Bạn có chắc chắn muốn xóa bản ghi này không? Phiếu rà soát liên quan cũng sẽ được xóa khỏi dữ liệu hiện tại.</p>
+
+            <div class="product-preview text-start mb-4">
+                <div class="row mb-3"><div class="col-5 text-muted">Mã sản phẩm</div><div class="col-7 fw-semibold">@Model.MbaCode</div></div>
+                <div class="row mb-3"><div class="col-5 text-muted">Tên sản phẩm</div><div class="col-7 fw-semibold">@Model.MbaName</div></div>
+                <div class="row mb-3"><div class="col-5 text-muted">Danh mục</div><div class="col-7">@Model.MbaCategory</div></div>
+                <div class="row"><div class="col-5 text-muted">Thương hiệu</div><div class="col-7">@Model.MbaBrand</div></div>
+            </div>
+
+            <div class="alert alert-warning text-start">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                Hãy kiểm tra thông tin trước khi thực hiện thao tác xóa.
+            </div>
+
+            <form asp-action="MbaDeleteConfirmed" method="post" class="d-flex justify-content-center gap-2 mt-4">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.MbaId" />
+                <a asp-action="MbaDetails" asp-route-id="@Model.MbaId" class="btn btn-outline-secondary px-4">Hủy</a>
+                <button type="submit" class="btn btn-danger px-4"><i class="bi bi-trash3 me-2"></i>Xóa sản phẩm</button>
+            </form>
+        </div>
+    </div>
+</div>

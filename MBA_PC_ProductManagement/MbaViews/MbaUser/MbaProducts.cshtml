@@ -1,0 +1,109 @@
+@{
+    ViewData["Title"] = "Rà soát dữ liệu";
+    Layout = "~/MbaViews/MbaUser/_MbaUserLayout.cshtml";
+}
+<section class="content-page review-page">
+    <div class="container-fluid px-lg-4">
+        <div class="page-hero review-hero">
+            <div>
+                <span class="profile-eyebrow">DATA REVIEW WORKSPACE</span>
+                <h1>Rà soát và nhập dữ liệu</h1>
+                <p>Nhận danh sách dữ liệu từ quản lý, đối chiếu với phiếu giấy và nhập hoặc sửa thông tin vào hệ thống.</p>
+            </div>
+            <span class="page-hero-icon"><i class="bi bi-clipboard2-check"></i></span>
+        </div>
+
+        @if (TempData["ReviewMessage"] != null)
+        {
+            <div class="alert alert-info review-alert">
+                <i class="bi bi-info-circle me-2"></i>@TempData["ReviewMessage"]
+            </div>
+        }
+
+        <div class="review-stats">
+            <div class="review-stat"><span class="stat-icon pending"><i class="bi bi-hourglass-split"></i></span><div><small>Chờ rà soát</small><strong>12</strong></div></div>
+            <div class="review-stat"><span class="stat-icon checking"><i class="bi bi-pencil-square"></i></span><div><small>Đang nhập / sửa</small><strong>03</strong></div></div>
+            <div class="review-stat"><span class="stat-icon done"><i class="bi bi-check2-circle"></i></span><div><small>Đã hoàn tất</small><strong>27</strong></div></div>
+            <div class="review-stat"><span class="stat-icon invalid"><i class="bi bi-exclamation-triangle"></i></span><div><small>Cần báo lại</small><strong>04</strong></div></div>
+        </div>
+
+        <div class="review-workspace">
+            <div class="review-toolbar">
+                <div>
+                    <h2>Danh sách phiếu cần xử lý</h2>
+                    <p>Đối chiếu từng dòng với dữ liệu trên giấy trước khi mở phiếu chỉnh sửa.</p>
+                </div>
+                <div class="review-toolbar-actions">
+                    <select class="form-select form-select-sm">
+                        <option>Tất cả trạng thái</option>
+                        <option>Chờ rà soát</option>
+                        <option>Đang xử lý</option>
+                        <option>Đã hoàn tất</option>
+                        <option>Không hợp lệ</option>
+                    </select>
+                    <div class="review-search"><i class="bi bi-search"></i><input type="text" placeholder="Tìm mã hoặc tên sản phẩm..." /></div>
+                </div>
+            </div>
+
+            <div class="review-table-wrap">
+                <table class="review-table">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" aria-label="Chọn tất cả" /></th>
+                            <th>Mã SP</th>
+                            <th>Thông tin sản phẩm</th>
+                            <th>Danh mục</th>
+                            <th>Giá trên phiếu</th>
+                            <th>Kiểm tra</th>
+                            <th>Trạng thái</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="checkbox" /></td>
+                            <td><strong>SP-001</strong></td>
+                            <td><div class="review-product"><span class="mini-product-icon"><i class="bi bi-pc-display"></i></span><div><strong>PC Gaming MBA 01</strong><small>Intel Core i5-14400F · RTX 4060</small></div></div></td>
+                            <td>PC Gaming</td>
+                            <td><strong>25.000.000</strong></td>
+                            <td><span class="check-progress"><i class="bi bi-circle"></i> 1/5 mục</span></td>
+                            <td><span class="review-badge waiting">Chờ rà soát</span></td>
+                            <td><a asp-controller="MbaUser" asp-action="MbaEditData" asp-route-id="1" class="btn btn-sm btn-primary"><i class="bi bi-pencil-square me-1"></i>Mở phiếu</a></td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" /></td>
+                            <td><strong>SP-002</strong></td>
+                            <td><div class="review-product"><span class="mini-product-icon"><i class="bi bi-cpu"></i></span><div><strong>Intel Core i5-14400F</strong><small>Intel · CPU Desktop</small></div></div></td>
+                            <td>CPU</td>
+                            <td><strong>—</strong></td>
+                            <td><span class="check-progress"><i class="bi bi-circle-half"></i> 3/5 mục</span></td>
+                            <td><span class="review-badge working">Đang xử lý</span></td>
+                            <td><a asp-controller="MbaUser" asp-action="MbaEditData" asp-route-id="2" class="btn btn-sm btn-primary"><i class="bi bi-pencil-square me-1"></i>Tiếp tục</a></td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" /></td>
+                            <td><strong>SP-003</strong></td>
+                            <td><div class="review-product"><span class="mini-product-icon"><i class="bi bi-gpu-card"></i></span><div><strong>NVIDIA RTX 4060</strong><small>NVIDIA · 8GB · GDDR6</small></div></div></td>
+                            <td>GPU</td>
+                            <td><strong>8.490.000</strong></td>
+                            <td><span class="check-progress complete"><i class="bi bi-check-circle-fill"></i> 5/5 mục</span></td>
+                            <td><span class="review-badge completed">Đã hoàn tất</span></td>
+                            <td><a asp-controller="MbaUser" asp-action="MbaEditData" asp-route-id="3" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye me-1"></i>Xem</a></td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" /></td>
+                            <td><strong>SP-004</strong></td>
+                            <td><div class="review-product"><span class="mini-product-icon"><i class="bi bi-memory"></i></span><div><strong>Kingston Fury 16GB</strong><small>DDR5 · 5200MHz</small></div></div></td>
+                            <td>RAM</td>
+                            <td><strong>1.290.000</strong></td>
+                            <td><span class="check-progress"><i class="bi bi-exclamation-circle"></i> 2/5 mục</span></td>
+                            <td><span class="review-badge invalid">Cần báo lại</span></td>
+                            <td><a asp-controller="MbaUser" asp-action="MbaEditData" asp-route-id="4" class="btn btn-sm btn-outline-danger"><i class="bi bi-exclamation-triangle me-1"></i>Kiểm tra</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="review-table-footer"><span>Hiển thị 4 phiếu mẫu · Danh sách thực tế sẽ lấy từ dữ liệu hệ thống.</span><div><button class="btn btn-sm btn-light" disabled>‹</button><button class="btn btn-sm btn-primary mx-1">1</button><button class="btn btn-sm btn-light" disabled>›</button></div></div>
+        </div>
+    </div>
+</section>

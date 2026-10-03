@@ -1,0 +1,23 @@
+@model MBA_PC_ProductManagement.MbaModels.MbaProduct
+@{
+    ViewData["Title"] = "Chỉnh sửa dữ liệu sản phẩm";
+}
+<div class="page-header"><div><h1>Chỉnh sửa dữ liệu sản phẩm</h1><p>Cập nhật thông tin sản phẩm trong hệ thống.</p></div><a asp-action="MbaDetails" asp-route-id="@Model.MbaId" class="btn btn-outline-secondary">← Quay lại</a></div>
+<div class="product-form-card">
+<form asp-action="MbaEdit" method="post">
+    @Html.AntiForgeryToken()
+    <input asp-for="MbaId" type="hidden" />
+    <div class="form-section"><h4>Thông tin cơ bản</h4><div class="form-grid">
+        <div class="form-group"><label>Mã sản phẩm</label><input asp-for="MbaCode" class="form-control" required /></div>
+        <div class="form-group"><label>Tên sản phẩm</label><input asp-for="MbaName" class="form-control" required /></div>
+        <div class="form-group"><label>Danh mục</label><input asp-for="MbaCategory" class="form-control" /></div>
+        <div class="form-group"><label>Thương hiệu</label><input asp-for="MbaBrand" class="form-control" /></div>
+        <div class="form-group"><label>Giá</label><input asp-for="MbaPrice" class="form-control" type="number" min="0" /></div>
+        <div class="form-group"><label>Số lượng</label><input asp-for="MbaQuantity" class="form-control" type="number" min="0" /></div>
+        <div class="form-group"><label>Trạng thái dữ liệu</label><select asp-for="MbaDataStatus" class="form-select"><option>Chờ rà soát</option><option>Đang kiểm tra</option><option>Đã chuẩn hóa</option><option>Cần báo lại</option></select></div>
+    </div></div>
+    <div class="form-section"><h4>Thông tin kỹ thuật</h4><textarea asp-for="MbaTechnicalInfo" class="form-control" rows="4"></textarea></div>
+    <div class="form-section"><h4>Mô tả</h4><textarea asp-for="MbaDescription" class="form-control" rows="5"></textarea></div>
+    <div class="form-actions"><a asp-action="MbaDetails" asp-route-id="@Model.MbaId" class="btn btn-outline-secondary">Hủy</a><button class="btn btn-primary" type="submit">✓ Cập nhật dữ liệu</button></div>
+</form>
+</div>

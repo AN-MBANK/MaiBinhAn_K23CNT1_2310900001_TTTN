@@ -1,0 +1,55 @@
+@model IEnumerable<MBA_PC_ProductManagement.MbaModels.MbaProduct>
+@using MBA_PC_ProductManagement.MbaData
+@{
+    ViewData["Title"] = "Danh sách sản phẩm";
+    var categories = ViewBag.MbaCategories as IEnumerable<MBA_PC_ProductManagement.MbaModels.MbaCategoryItem> ?? Enumerable.Empty<MBA_PC_ProductManagement.MbaModels.MbaCategoryItem>();
+}
+<div class="products-page">
+    <div class="page-heading">
+        <div><span class="profile-eyebrow">PRODUCT DATA</span><h1 class="page-title">Danh sách sản phẩm</h1><p class="page-description">Quản lý, rà soát và chuẩn hóa thông tin sản phẩm máy tính.</p></div>
+        <a asp-action="MbaCreate" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i>Thêm dữ liệu sản phẩm</a>
+    </div>
+
+    @if (TempData["ProductMessage"] != null) { <div class="alert alert-success">@TempData["ProductMessage"]</div> }
+
+    <form asp-action="MbaIndex" method="get" class="filter-card">
+        <div class="filter-row">
+            <div class="search-field"><i class="bi bi-search"></i><input name="keyword" value="@ViewBag.Keyword" class="form-control" placeholder="Tìm mã hoặc tên sản phẩm..." /></div>
+            <select name="category" class="form-select">
+                <option value="Tất cả">Tất cả danh mục</option>
+                @foreach (var c in categories) { <option value="@c.MbaName" selected="@(ViewBag.MbaCategory as string == c.MbaName)">@c.MbaName</option> }
+            </select>
+            <select name="status" class="form-select">
+                <option value="Tất cả">Tất cả trạng thái</option>
+                <option selected="@(ViewBag.MbaStatus as string == "Đã chuẩn hóa")">Đã chuẩn hóa</option>
+                <option selected="@(ViewBag.MbaStatus as string == "Đang kiểm tra")">Đang kiểm tra</option>
+                <option selected="@(ViewBag.MbaStatus as string == "Cần rà soát")">Cần rà soát</option>
+                <option selected="@(ViewBag.MbaStatus as string == "Cần báo lại")">Cần báo lại</option>
+            </select>
+            <button class="btn btn-outline-primary" type="submit"><i class="bi bi-funnel me-1"></i>Lọc</button>
+        </div>
+    </form>
+
+    <div class="content-card">
+        <div class="content-card-header"><div><h5>Bảng dữ liệu sản phẩm</h5><p>@Model.Count() bản ghi phù hợp.</p></div></div>
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead><tr><th>STT</th><th>Mã SP</th><th>Tên sản phẩm</th><th>Danh mục</th><th>Thương hiệu</th><th>Giá</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+                <tbody>
+                @foreach (var item in Model.Select((p, index) => new { p, index }))
+                {
+                    var p = item.p;
+                    <tr>
+                        <td>@(item.index + 1)</td>
+                        <td><span class="product-code">@p.MbaCode</span></td>
+                        <td><span class="product-name">@p.MbaName</span><span class="product-subtitle">@p.MbaTechnicalInfo</span></td>
+                        <td>@p.MbaCategory</td><td>@p.MbaBrand</td><td>@(p.MbaPrice == 0 ? "—" : p.MbaPrice.ToString("N0") + " ₫")</td>
+                        <td><span class="data-status status-review">@p.MbaDataStatus</span></td>
+                        <td><div class="action-buttons"><a asp-action="MbaDetails" asp-route-id="@p.MbaId" title="Xem"><i class="bi bi-eye"></i></a><a asp-action="MbaEdit" asp-route-id="@p.MbaId" title="Sửa"><i class="bi bi-pencil"></i></a><a asp-action="MbaDelete" asp-route-id="@p.MbaId" title="Xóa"><i class="bi bi-trash"></i></a></div></td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

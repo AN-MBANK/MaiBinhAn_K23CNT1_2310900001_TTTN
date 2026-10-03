@@ -1,0 +1,33 @@
+@model MBA_PC_ProductManagement.MbaControllers.MbaReviewEditViewModel
+@{
+    ViewData["Title"] = "Phiếu rà soát dữ liệu";
+    Layout = "~/MbaViews/MbaUser/_MbaUserLayout.cshtml";
+}
+<section class="content-page edit-data-page"><div class="container">
+<div class="page-hero"><div><span class="profile-eyebrow">DATA ENTRY FORM</span><h1>Phiếu rà soát dữ liệu</h1><p>Đối chiếu thông tin trên giấy với dữ liệu hiện tại.</p></div><span class="page-hero-icon"><i class="bi bi-pencil-square"></i></span></div>
+<div class="source-paper-banner"><div><i class="bi bi-file-earmark-text"></i><div><strong>Nguồn dữ liệu: Phiếu giấy do quản lý bàn giao</strong><span>Phiếu #@Model.MbaReview.MbaId · Người xử lý: @(Model.MbaReview.MbaEmployee?.MbaFullName ?? "Chưa phân công")</span></div></div><span class="review-badge waiting">@Model.MbaReview.MbaStatus</span></div>
+<form asp-action="MbaEditData" method="post">@Html.AntiForgeryToken()
+<input type="hidden" asp-for="MbaReview.MbaId" /><input type="hidden" asp-for="MbaProduct.MbaId" />
+<div class="data-form-grid">
+<section class="data-form-card"><div class="data-form-heading"><span><i class="bi bi-box-seam"></i></span><div><h2>Thông tin sản phẩm</h2><p>Nhập đúng nội dung theo phiếu giấy.</p></div></div>
+<div class="row g-3">
+<div class="col-md-4"><label class="form-label">Mã sản phẩm</label><input asp-for="MbaProduct.MbaCode" class="form-control" required /></div>
+<div class="col-md-8"><label class="form-label">Tên sản phẩm</label><input asp-for="MbaProduct.MbaName" class="form-control" required /></div>
+<div class="col-md-6"><label class="form-label">Danh mục</label><input asp-for="MbaProduct.MbaCategory" class="form-control" /></div>
+<div class="col-md-6"><label class="form-label">Thương hiệu</label><input asp-for="MbaProduct.MbaBrand" class="form-control" /></div>
+<div class="col-md-6"><label class="form-label">Giá</label><input asp-for="MbaProduct.MbaPrice" class="form-control" type="number" /></div>
+<div class="col-md-6"><label class="form-label">Số lượng</label><input asp-for="MbaProduct.MbaQuantity" class="form-control" type="number" /></div>
+<div class="col-12"><label class="form-label">Thông tin kỹ thuật</label><textarea asp-for="MbaProduct.MbaTechnicalInfo" class="form-control" rows="4"></textarea></div>
+<div class="col-12"><label class="form-label">Ghi chú rà soát</label><textarea asp-for="MbaReview.MbaReviewNote" class="form-control" rows="4" placeholder="Ghi lại điểm khác biệt giữa phiếu giấy và dữ liệu hiện tại..."></textarea></div>
+</div></section>
+<section class="data-form-card"><div class="data-form-heading"><span><i class="bi bi-list-check"></i></span><div><h2>Checklist đối chiếu</h2><p>Tick các mục đã kiểm tra.</p></div></div>
+<div class="checklist">
+<label><input type="checkbox" name="CheckedCount" value="1" @(Model.MbaReview.MbaCheckedItems>=1?"checked":"") /> <span><strong>Mã sản phẩm</strong><small>Đã đối chiếu với phiếu giấy</small></span></label>
+<label><input type="checkbox" name="CheckedCount" value="1" @(Model.MbaReview.MbaCheckedItems>=2?"checked":"") /> <span><strong>Tên sản phẩm</strong><small>Đúng chính tả và đúng tên</small></span></label>
+<label><input type="checkbox" name="CheckedCount" value="1" @(Model.MbaReview.MbaCheckedItems>=3?"checked":"") /> <span><strong>Danh mục / thương hiệu</strong><small>Đã kiểm tra nhóm và hãng</small></span></label>
+<label><input type="checkbox" name="CheckedCount" value="1" @(Model.MbaReview.MbaCheckedItems>=4?"checked":"") /> <span><strong>Giá / thông tin kỹ thuật</strong><small>Đã đối chiếu dữ liệu được bàn giao</small></span></label>
+<label><input type="checkbox" name="CheckedCount" value="1" @(Model.MbaReview.MbaCheckedItems>=5?"checked":"") /> <span><strong>Trạng thái dữ liệu</strong><small>Đã xác định hợp lệ hoặc cần báo lại</small></span></label>
+</div>
+<div class="review-guidance"><i class="bi bi-lightbulb"></i><div><strong>Quy trình</strong><span>Đọc phiếu giấy → nhập/sửa → kiểm checklist → hoàn tất hoặc báo lại quản lý.</span></div></div>
+<div class="data-form-actions"><a asp-action="MbaReview" class="btn btn-light">Quay lại</a><button name="actionType" value="save" class="btn btn-outline-primary" type="submit">Lưu đang xử lý</button><button name="actionType" value="invalid" class="btn btn-outline-danger" type="submit">Cần báo lại</button><button name="actionType" value="complete" class="btn btn-primary" type="submit"><i class="bi bi-check2-circle me-2"></i>Hoàn tất phiếu</button></div>
+</section></div></form></div></section>

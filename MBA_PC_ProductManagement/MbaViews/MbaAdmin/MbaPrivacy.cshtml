@@ -1,0 +1,219 @@
+@{
+    ViewData["Title"] = "Thông tin hệ thống";
+}
+
+<div class="page-header mb-4">
+    <h1 class="fw-bold">Thông tin hệ thống</h1>
+    <p class="text-muted mb-0">
+        Thông tin giới thiệu về hệ thống quản lý sản phẩm máy tính MBA PC.
+    </p>
+</div>
+
+<div class="row g-4">
+
+    <!-- Thông tin hệ thống -->
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body p-4">
+
+                <div class="d-flex align-items-center mb-4">
+                    <div class="info-icon bg-primary-subtle text-primary me-3">
+                        <i class="bi bi-pc-display"></i>
+                    </div>
+
+                    <div>
+                        <h4 class="fw-bold mb-1">MBA PC MbaProduct Management</h4>
+                        <p class="text-muted mb-0">
+                            Hệ thống quản lý sản phẩm máy tính
+                        </p>
+                    </div>
+                </div>
+
+                <div class="info-row">
+                    <span>Tên hệ thống</span>
+                    <strong>MBA PC MbaProduct Management</strong>
+                </div>
+
+                <div class="info-row">
+                    <span>Phiên bản</span>
+                    <strong>1.0.0</strong>
+                </div>
+
+                <div class="info-row">
+                    <span>Nền tảng</span>
+                    <strong>ASP.NET Core MVC</strong>
+                </div>
+
+                <div class="info-row">
+                    <span>Ngôn ngữ lập trình</span>
+                    <strong>C#</strong>
+                </div>
+
+                <div class="info-row">
+                    <span>Cơ sở dữ liệu</span>
+                    <strong>SQL Server</strong>
+                </div>
+
+                <div class="info-row border-0">
+                    <span>Giao diện</span>
+                    <strong>Bootstrap</strong>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Trạng thái hệ thống -->
+    <div class="col-lg-5">
+        <div class="card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card-body p-4">
+
+                <div class="d-flex align-items-center mb-3">
+                    <div class="info-icon bg-success-subtle text-success me-3">
+                        <i class="bi bi-check-circle"></i>
+                    </div>
+
+                    <div>
+                        <h5 class="fw-bold mb-1">Trạng thái hệ thống</h5>
+                        <p class="text-muted mb-0">
+                            Kiểm tra trạng thái hoạt động
+                        </p>
+                    </div>
+                </div>
+
+                <div class="status-box">
+                    <span class="status-dot"></span>
+                    <div>
+                        <strong>Hệ thống đang hoạt động</strong>
+                        <p class="mb-0 text-muted">
+                            Website đã sẵn sàng sử dụng.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-4">
+
+                <h5 class="fw-bold mb-3">Mục đích sử dụng</h5>
+
+                <p class="text-muted mb-0">
+                    Hệ thống được xây dựng nhằm hỗ trợ quản lý thông tin
+                    các sản phẩm máy tính, bao gồm thêm mới, cập nhật,
+                    xem chi tiết, tìm kiếm và kiểm soát dữ liệu sản phẩm.
+                </p>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Thông tin người thực hiện -->
+    <div class="col-12">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-4">
+
+                <h5 class="fw-bold mb-3">Thông tin thực hiện</h5>
+
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="student-info">
+                            <span>Sinh viên thực hiện</span>
+                            <strong>Mai Bình An</strong>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="student-info">
+                            <span>Lớp</span>
+                            <strong>K23CNT1</strong>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="student-info">
+                            <span>Đơn vị thực tập</span>
+                            <strong>Devmaster</strong>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<style>
+    .page-header h1 {
+        color: #17233c;
+    }
+
+    .info-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        padding: 16px 0;
+        border-bottom: 1px solid #edf0f5;
+    }
+
+        .info-row span {
+            color: #8490a5;
+        }
+
+        .info-row strong {
+            color: #17233c;
+            text-align: right;
+        }
+
+    .status-box {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 18px;
+        background: #ecfdf3;
+        border: 1px solid #c8f1d9;
+        border-radius: 14px;
+    }
+
+        .status-box strong {
+            color: #087443;
+        }
+
+    .status-dot {
+        width: 12px;
+        height: 12px;
+        margin-top: 5px;
+        border-radius: 50%;
+        background: #18b978;
+        flex-shrink: 0;
+    }
+
+    .student-info {
+        padding: 16px;
+        background: #f8f9fc;
+        border-radius: 12px;
+    }
+
+        .student-info span {
+            display: block;
+            color: #8490a5;
+            margin-bottom: 6px;
+        }
+
+        .student-info strong {
+            color: #17233c;
+        }
+</style>

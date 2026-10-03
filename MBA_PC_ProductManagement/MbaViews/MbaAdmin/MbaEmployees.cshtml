@@ -1,0 +1,54 @@
+@model IEnumerable<MBA_PC_ProductManagement.MbaModels.MbaEmployee>
+@{
+    ViewData["Title"] = "Quản lý nhân viên";
+}
+<div class="dashboard-page">
+    <div class="dashboard-hero">
+        <div>
+            <span class="profile-eyebrow">EMPLOYEE MANAGEMENT</span>
+            <h1 class="page-title">Quản lý nhân viên</h1>
+            <p class="page-description">Tạo tài khoản riêng cho từng nhân viên và theo dõi trạng thái hoạt động.</p>
+        </div>
+        <a asp-action="MbaCreateEmployee" class="btn btn-primary"><i class="bi bi-person-plus me-1"></i>Thêm nhân viên</a>
+    </div>
+    @if (TempData["EmployeeMessage"] != null) { <div class="alert alert-success">@TempData["EmployeeMessage"]</div> }
+    <div class="content-card">
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead><tr><th>STT</th><th>Ảnh</th><th>Tài khoản</th><th>Họ tên</th><th>MbaEmail</th><th>SĐT</th><th>Vai trò</th><th>Trạng thái</th><th></th></tr></thead>
+                <tbody>
+                @foreach (var item in Model.Select((e, index) => new { e, index }))
+                {
+                    var e = item.e;
+                    <tr>
+                        <td>@(item.index + 1)</td>
+                        <td>
+                            <div style="width:38px;height:38px;border-radius:50%;overflow:hidden;display:grid;place-items:center;background:#eaf2ff;color:#2563eb;font-weight:800;">
+                                @if (!string.IsNullOrWhiteSpace(e.MbaAvatarUrl)) { <img src="@e.MbaAvatarUrl" alt="Ảnh @e.MbaFullName" style="width:100%;height:100%;object-fit:cover;" /> } else { @e.MbaFullName.Substring(0, 1).ToUpperInvariant() }
+                            </div>
+                        </td>
+                        <td><strong>@e.MbaAccount.MbaUsername</strong></td>
+                        <td>@e.MbaFullName</td>
+                        <td>@e.MbaEmail</td>
+                        <td>@e.MbaPhone</td>
+                        <td><span class="badge bg-light text-dark">MbaEmployee</span></td>
+                        <td><span class="badge @(e.MbaIsActive ? "bg-success" : "bg-secondary")">@(e.MbaIsActive ? "Đang hoạt động" : "Đã khóa")</span></td>
+                        <td>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <a asp-action="MbaEditEmployee" asp-route-id="@e.MbaId" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil-square me-1"></i>Sửa</a>
+                                <form asp-action="MbaToggleEmployee" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@e.MbaId" />
+                                <button class="btn btn-sm @(e.MbaIsActive ? "btn-outline-danger" : "btn-outline-success")" type="submit">
+                                    @(e.MbaIsActive ? "Khóa" : "Mở khóa")
+                                </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

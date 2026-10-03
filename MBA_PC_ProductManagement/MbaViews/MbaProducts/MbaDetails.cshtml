@@ -1,0 +1,22 @@
+@model MBA_PC_ProductManagement.MbaModels.MbaProduct
+@{
+    ViewData["Title"] = "Chi tiết sản phẩm";
+    var review = ViewBag.MbaReview as MBA_PC_ProductManagement.MbaModels.MbaReviewItem;
+}
+<div class="page-header"><div><h1>Chi tiết sản phẩm</h1><p>Xem toàn bộ dữ liệu của bản ghi.</p></div><div class="header-actions"><a asp-action="MbaIndex" class="btn btn-outline-secondary">← Quay lại</a><a asp-action="MbaEdit" asp-route-id="@Model.MbaId" class="btn btn-primary">✎ Chỉnh sửa</a></div></div>
+<div class="details-layout">
+<div class="content-card">
+    <div class="details-header"><div class="category-icon">▦</div><div><span class="category-code">@Model.MbaCode</span><h2>@Model.MbaName</h2><p>@Model.MbaCategory · @Model.MbaBrand</p></div><span class="status-badge status-active">@Model.MbaDataStatus</span></div>
+    <div class="details-section"><h3>Thông tin dữ liệu</h3><div class="info-grid">
+        <div class="info-item"><span>Mã sản phẩm</span><strong>@Model.MbaCode</strong></div>
+        <div class="info-item"><span>Danh mục</span><strong>@Model.MbaCategory</strong></div>
+        <div class="info-item"><span>Thương hiệu</span><strong>@Model.MbaBrand</strong></div>
+        <div class="info-item"><span>Giá</span><strong>@(Model.MbaPrice == 0 ? "Chưa có" : Model.MbaPrice.ToString("N0") + " ₫")</strong></div>
+        <div class="info-item"><span>Số lượng</span><strong>@Model.MbaQuantity</strong></div>
+        <div class="info-item"><span>Rà soát</span><strong>@(review?.MbaStatus ?? "Chưa có phiếu")</strong></div>
+    </div></div>
+    <div class="details-section"><h3>Thông tin kỹ thuật</h3><p class="description">@Model.MbaTechnicalInfo</p></div>
+    <div class="details-section"><h3>Mô tả</h3><p class="description">@Model.MbaDescription</p></div>
+</div>
+<div class="side-card"><h3>Thao tác</h3><div class="management-item"><span>Chỉnh sửa</span><a asp-action="MbaEdit" asp-route-id="@Model.MbaId">Mở biểu mẫu →</a></div><div class="management-item"><span>Xóa dữ liệu</span><a class="text-danger" asp-action="MbaDelete" asp-route-id="@Model.MbaId">Xóa bản ghi →</a></div></div>
+</div>

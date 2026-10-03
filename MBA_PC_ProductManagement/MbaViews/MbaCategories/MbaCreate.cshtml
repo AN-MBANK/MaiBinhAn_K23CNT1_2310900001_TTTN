@@ -1,0 +1,4 @@
+@model MBA_PC_ProductManagement.MbaModels.MbaCategoryItem
+@{ ViewData["Title"] = "Thêm danh mục"; }
+<div class="page-header"><div><h1>Thêm danh mục</h1><p>Nhập thông tin danh mục mới.</p></div><a asp-action="MbaIndex" class="btn btn-outline-secondary">← Quay lại</a></div>
+<div class="content-card"><form asp-action="MbaCreate" method="post">@Html.AntiForgeryToken()<div class="form-grid"><div class="form-group"><label>Mã danh mục</label><input asp-for="MbaCode" class="form-control" /></div><div class="form-group"><label>Tên danh mục</label><input asp-for="MbaName" class="form-control" required /></div><div class="form-group full-width"><label>Mô tả</label><textarea asp-for="MbaDescription" class="form-control" rows="4"></textarea></div></div><div class="form-actions mt-4"><a asp-action="MbaIndex" class="btn btn-outline-secondary">Hủy</a><button class="btn btn-primary" type="submit">+ Thêm danh mục</button></div></form></div>

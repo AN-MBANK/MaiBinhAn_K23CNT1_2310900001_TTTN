@@ -1,0 +1,9 @@
+MBA naming pass
+- Controllers folder -> MbaControllers
+- Models folder -> MbaModels
+- Data folder -> MbaData
+- Views folder -> MbaViews
+- All custom controllers/models/data classes/actions/views already use Mba prefix
+- DbSet names: MbaProducts, MbaCategories, MbaReviews, MbaAccounts, MbaAdmins, MbaEmployees
+- Framework/SQL table names remain unchanged where required for compatibility.
+- Domain/URL naming is intentionally not changed in this pass.

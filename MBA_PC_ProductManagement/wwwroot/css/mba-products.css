@@ -1,0 +1,4 @@
+/* Product data table styles */
+.products-page .table-responsive{overflow-x:auto}
+.products-page .product-name{min-width:180px}
+.products-page .table th:last-child,.products-page .table td:last-child{white-space:nowrap}

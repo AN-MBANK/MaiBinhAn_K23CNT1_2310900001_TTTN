@@ -1,0 +1,25 @@
+@model IEnumerable<MBA_PC_ProductManagement.MbaControllers.MbaReviewRow>
+@{
+    ViewData["Title"] = "Rà soát dữ liệu";
+    Layout = "~/MbaViews/MbaUser/_MbaUserLayout.cshtml";
+}
+<section class="content-page review-page">
+<div class="container-fluid px-lg-4">
+<div class="page-hero review-hero"><div><span class="profile-eyebrow">DATA REVIEW WORKSPACE</span><h1>Rà soát và nhập dữ liệu</h1><p>Đối chiếu phiếu giấy do quản lý bàn giao với dữ liệu trên hệ thống.</p></div><span class="page-hero-icon"><i class="bi bi-clipboard2-check"></i></span></div>
+@if(TempData["ReviewMessage"] != null){<div class="alert alert-info review-alert"><i class="bi bi-info-circle me-2"></i>@TempData["ReviewMessage"]</div>}
+<div class="review-stats">
+<div class="review-stat"><span class="stat-icon pending"><i class="bi bi-hourglass-split"></i></span><div><small>Chờ rà soát</small><strong>@ViewBag.Pending</strong></div></div>
+<div class="review-stat"><span class="stat-icon checking"><i class="bi bi-pencil-square"></i></span><div><small>Đang nhập / sửa</small><strong>@ViewBag.Working</strong></div></div>
+<div class="review-stat"><span class="stat-icon done"><i class="bi bi-check2-circle"></i></span><div><small>Đã hoàn tất</small><strong>@ViewBag.Completed</strong></div></div>
+<div class="review-stat"><span class="stat-icon invalid"><i class="bi bi-exclamation-triangle"></i></span><div><small>Cần báo lại</small><strong>@ViewBag.Invalid</strong></div></div>
+</div>
+<div class="review-workspace">
+<form asp-action="MbaReview" method="get" class="review-toolbar">
+<div><h2>Danh sách phiếu cần xử lý</h2><p>Chọn phiếu để nhập/sửa dữ liệu và hoàn tất checklist.</p></div>
+<div class="review-toolbar-actions"><select name="status" class="form-select form-select-sm"><option value="Tất cả">Tất cả trạng thái</option><option selected="@(ViewBag.MbaStatus as string=="Chờ rà soát")">Chờ rà soát</option><option selected="@(ViewBag.MbaStatus as string=="Đang xử lý")">Đang xử lý</option><option selected="@(ViewBag.MbaStatus as string=="Đã hoàn tất")">Đã hoàn tất</option><option selected="@(ViewBag.MbaStatus as string=="Cần báo lại")">Cần báo lại</option><option selected="@(ViewBag.MbaStatus as string=="Đã chốt quá hạn")">Đã chốt quá hạn</option></select><div class="review-search"><i class="bi bi-search"></i><input name="keyword" value="@ViewBag.Keyword" placeholder="Tìm mã hoặc tên..." /></div><button class="btn btn-primary btn-sm">Lọc</button></div>
+</form>
+<div class="review-table-wrap"><table class="review-table"><thead><tr><th>STT</th><th>Mã SP</th><th>Thông tin</th><th>Danh mục</th><th>Giá</th><th>Checklist</th><th>Trạng thái</th><th>Thời hạn</th><th>Thao tác</th></tr></thead><tbody>
+@foreach(var item in Model.Select((row, index) => new { row, index })){ var row = item.row; <tr><td><strong>@(item.index + 1)</strong></td><td><strong>@row.MbaProduct.MbaCode</strong></td><td><div class="review-product"><span class="mini-product-icon"><i class="bi bi-box-seam"></i></span><div><strong>@row.MbaProduct.MbaName</strong><small>@row.MbaProduct.MbaBrand · @row.MbaProduct.MbaTechnicalInfo</small></div></div></td><td>@row.MbaProduct.MbaCategory</td><td>@(row.MbaProduct.MbaPrice==0?"—":row.MbaProduct.MbaPrice.ToString("N0")+" ₫")</td><td><span class="check-progress @(row.MbaReview.MbaCheckedItems==row.MbaReview.MbaTotalItems?"complete":"")"><i class="bi bi-check-circle"></i> @row.MbaReview.MbaCheckedItems/@row.MbaReview.MbaTotalItems</span></td><td><span class="review-badge @(row.MbaReview.MbaStatus=="Đã hoàn tất"?"completed":row.MbaReview.MbaStatus=="Cần báo lại"?"invalid":row.MbaReview.MbaStatus=="Đã chốt quá hạn"?"invalid":row.MbaReview.MbaStatus=="Đang xử lý"?"working":"waiting")">@row.MbaReview.MbaStatus</span></td><td>@(row.MbaReview.MbaDeadline.HasValue ? row.MbaReview.MbaDeadline.Value.ToString("dd/MM/yyyy HH:mm") : "Chưa đặt")</td><td>@if (row.MbaReview.MbaIsLocked || row.MbaReview.MbaStatus == "Đã hoàn tất") { <span class="btn btn-sm btn-outline-secondary">Xem</span> } else { <a asp-action="MbaEditData" asp-route-id="@row.MbaReview.MbaId" class="btn btn-sm btn-primary">Mở phiếu</a> }</td></tr>}
+</tbody></table></div>
+<div class="review-table-footer"><span>@Model.Count() phiếu trong danh sách hiện tại.</span></div>
+</div></div></section>

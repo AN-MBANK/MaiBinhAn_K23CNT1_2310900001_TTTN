@@ -1,0 +1,49 @@
+@model MBA_PC_ProductManagement.MbaModels.MbaEmployeeEditViewModel
+@{ ViewData["Title"] = "Sửa thông tin nhân viên"; }
+<div class="dashboard-page">
+    <div class="page-heading">
+        <div>
+            <span class="profile-eyebrow">EMPLOYEE MANAGEMENT</span>
+            <h1 class="page-title">Sửa thông tin nhân viên</h1>
+            <p class="page-description">Cập nhật lại thông tin nhân viên khi hồ sơ cá nhân có thay đổi hoặc dữ liệu được nhập sai.</p>
+        </div>
+        <a asp-action="MbaEmployees" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Danh sách nhân viên</a>
+    </div>
+
+    <div class="content-card" style="max-width:760px">
+        <form asp-action="MbaEditEmployee" method="post">
+            @Html.AntiForgeryToken()
+            <input asp-for="MbaId" type="hidden" />
+            <input asp-for="MbaAccountId" type="hidden" />
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="MbaUsername" class="form-label">Tên tài khoản</label>
+                    <input asp-for="MbaUsername" class="form-control" autocomplete="username" />
+                    <span asp-validation-for="MbaUsername" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="MbaFullName" class="form-label">Họ và tên</label>
+                    <input asp-for="MbaFullName" class="form-control" />
+                    <span asp-validation-for="MbaFullName" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="MbaEmail" class="form-label">MbaEmail</label>
+                    <input asp-for="MbaEmail" class="form-control" type="email" />
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="MbaPhone" class="form-label">Số điện thoại</label>
+                    <input asp-for="MbaPhone" class="form-control" />
+                </div>
+            </div>
+            <div class="alert alert-light border mt-4 mb-0">
+                <i class="bi bi-info-circle me-2"></i> Mật khẩu không hiển thị tại đây. Nếu cần cấp lại mật khẩu, nên thực hiện bằng chức năng riêng để tránh lộ thông tin đăng nhập.
+            </div>
+            <div class="d-flex justify-content-end gap-2 mt-4">
+                <a asp-action="MbaEmployees" class="btn btn-outline-secondary">Hủy</a>
+                <button type="submit" class="btn btn-primary"><i class="bi bi-check2 me-1"></i>Lưu thay đổi</button>
+            </div>
+        </form>
+    </div>
+</div>
+@section Scripts { <partial name="_MbaValidationScriptsPartial" /> }

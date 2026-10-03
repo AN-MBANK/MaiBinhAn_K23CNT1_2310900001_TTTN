@@ -1,0 +1,94 @@
+@{
+    ViewData["Title"] = "Hồ sơ quản trị viên";
+    var userName = ViewBag.UserName as string ?? "admin";
+    var role = ViewBag.UserRole as string ?? "Admin";
+    var letter = string.IsNullOrWhiteSpace(userName) ? "A" : userName.Substring(0, 1).ToUpperInvariant();
+    var avatarUrl = ViewBag.MbaAvatarUrl as string;
+}
+<div class="dashboard-page profile-admin-page">
+    <div class="page-heading profile-page-heading-admin">
+        <div><span class="profile-eyebrow">ADMIN ACCOUNT</span><h1 class="page-title">Hồ sơ quản trị viên</h1><p class="page-description">Thông tin tài khoản và các khu vực quản trị được cấp quyền.</p></div>
+        <a asp-controller="MbaAdmin" asp-action="MbaIndex" class="btn btn-outline-primary"><i class="bi bi-arrow-left me-2"></i>Dashboard</a>
+    </div>
+
+    <div class="admin-profile-hero">
+        <div class="admin-profile-identity">
+            <form id="adminAvatarUploadForm" class="admin-avatar-form" asp-controller="MbaAdmin" asp-action="MbaUploadAvatar" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <input id="adminAvatar" name="avatar" type="file" class="visually-hidden" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" />
+                <label for="adminAvatar" class="admin-profile-avatar admin-avatar-trigger" title="Nhấn để chọn ảnh đại diện từ máy tính" aria-label="Chọn ảnh đại diện">
+                    @if (!string.IsNullOrWhiteSpace(avatarUrl)) { <img id="adminAvatarPreview" src="@avatarUrl" alt="Ảnh đại diện của @ViewBag.DisplayName" /> } else { <span id="adminAvatarLetter">@letter</span> }
+                    <span class="admin-avatar-overlay"><i class="bi bi-camera-fill"></i><small>Đổi ảnh</small></span>
+                </label>
+            </form>
+            <div><span class="profile-status"><span></span> Đang hoạt động</span><h2>@ViewBag.DisplayName</h2><p><i class="bi bi-shield-check me-2"></i>@role · @userName</p><span class="admin-avatar-hint"><i class="bi bi-camera me-1"></i> Nhấn vào ảnh để thay đổi</span></div>
+        </div>
+        <div class="admin-profile-badge"><i class="bi bi-shield-fill-check"></i><div><strong>Quyền quản trị</strong><span>Truy cập các chức năng quản lý và cấu hình hệ thống.</span></div></div>
+    </div>
+
+    <script>
+        (function () {
+            const input = document.getElementById('adminAvatar');
+            const form = document.getElementById('adminAvatarUploadForm');
+            const trigger = document.querySelector('.admin-avatar-trigger');
+            const preview = document.getElementById('adminAvatarPreview');
+            const letter = document.getElementById('adminAvatarLetter');
+
+            input?.addEventListener('change', function () {
+                const file = this.files && this.files[0];
+                if (!file) return;
+                const allowed = ['image/jpeg', 'image/png', 'image/webp'];
+                if (!allowed.includes(file.type) || file.size > 2 * 1024 * 1024) {
+                    this.value = '';
+                    alert('Ảnh phải có định dạng JPG, JPEG, PNG hoặc WEBP và dung lượng không quá 2 MB.');
+                    return;
+                }
+                const url = URL.createObjectURL(file);
+                if (preview) preview.src = url;
+                else {
+                    const img = document.createElement('img');
+                    img.id = 'adminAvatarPreview';
+                    img.alt = 'Ảnh đại diện mới';
+                    img.src = url;
+                    letter?.replaceWith(img);
+                }
+                trigger?.classList.add('is-uploading');
+                form?.submit();
+            });
+        })();
+    </script>
+
+    <div class="admin-profile-grid">
+        @if (TempData["ProfileMessage"] != null) { <div class="alert alert-success mb-3">@TempData["ProfileMessage"]</div> }
+
+        <section class="content-card profile-admin-panel">
+            <div class="profile-panel-heading"><div class="profile-panel-icon"><i class="bi bi-person-vcard"></i></div><div><h3>Thông tin tài khoản</h3><p>Thông tin nhận diện của quản trị viên hiện tại.</p></div></div>
+            <div class="profile-details">
+                <div class="profile-detail"><span>Tên tài khoản</span><strong>@userName</strong></div>
+                <div class="profile-detail"><span>Vai trò</span><strong>@role</strong></div>
+                <div class="profile-detail"><span>Trạng thái</span><strong class="detail-success"><i class="bi bi-check-circle-fill"></i> Đang hoạt động</strong></div>
+                <div class="profile-detail"><span>MbaEmail</span><strong class="@(string.IsNullOrWhiteSpace(ViewBag.MbaEmail as string) ? "detail-muted" : "")">@(string.IsNullOrWhiteSpace(ViewBag.MbaEmail as string) ? "Chưa cập nhật" : ViewBag.MbaEmail)</strong></div>
+                <div class="profile-detail"><span>Số điện thoại</span><strong class="@(string.IsNullOrWhiteSpace(ViewBag.MbaPhone as string) ? "detail-muted" : "")">@(string.IsNullOrWhiteSpace(ViewBag.MbaPhone as string) ? "Chưa cập nhật" : ViewBag.MbaPhone)</strong></div>
+                <div class="profile-detail"><span>Phiên đăng nhập</span><strong class="detail-success">Hiện tại</strong></div>
+            </div>
+        </section>
+
+        <section class="content-card profile-admin-panel">
+            <div class="profile-panel-heading"><div class="profile-panel-icon"><i class="bi bi-kanban"></i></div><div><h3>Khu vực quản trị</h3><p>Các chức năng chính của tài khoản MbaAdmin.</p></div></div>
+            <div class="profile-admin-actions">
+                <a class="profile-action" asp-controller="MbaAdmin" asp-action="MbaIndex"><span class="action-icon"><i class="bi bi-speedometer2"></i></span><span><strong>Dashboard</strong><small>Tổng quan dữ liệu hệ thống.</small></span><i class="bi bi-chevron-right"></i></a>
+                <a class="profile-action" asp-controller="MbaProducts" asp-action="MbaIndex"><span class="action-icon"><i class="bi bi-box-seam"></i></span><span><strong>Quản lý sản phẩm</strong><small>Xem và quản lý dữ liệu sản phẩm.</small></span><i class="bi bi-chevron-right"></i></a>
+                <a class="profile-action" asp-controller="MbaCategories" asp-action="MbaIndex"><span class="action-icon"><i class="bi bi-tags"></i></span><span><strong>Quản lý danh mục</strong><small>Quản lý nhóm sản phẩm.</small></span><i class="bi bi-chevron-right"></i></a>
+                <a class="profile-action" asp-controller="MbaAdmin" asp-action="MbaSettings"><span class="action-icon"><i class="bi bi-gear"></i></span><span><strong>Quản lý hệ thống</strong><small>Cấu hình và thiết lập hệ thống.</small></span><i class="bi bi-chevron-right"></i></a>
+            </div>
+        </section>
+    </div>
+
+    <section class="content-card profile-admin-panel admin-security-panel">
+        <div class="profile-panel-heading"><div class="profile-panel-icon"><i class="bi bi-shield-lock"></i></div><div><h3>Bảo mật tài khoản</h3><p>Quản lý phiên đăng nhập quản trị hiện tại.</p></div></div>
+        <div class="security-row">
+            <div><strong><i class="bi bi-shield-check me-2"></i>Phiên quản trị hiện tại</strong><span>Phiên đăng nhập MbaAdmin đang hoạt động trên thiết bị này.</span></div>
+            <form asp-controller="MbaAccount" asp-action="MbaLogout" method="post">@Html.AntiForgeryToken()<button type="submit" class="btn btn-outline-danger"><i class="bi bi-box-arrow-right me-2"></i>Đăng xuất</button></form>
+        </div>
+    </section>
+</div>

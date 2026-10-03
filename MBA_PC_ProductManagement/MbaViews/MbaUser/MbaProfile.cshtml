@@ -1,0 +1,123 @@
+@{
+    ViewData["Title"] = "Hồ sơ cá nhân";
+    Layout = "~/MbaViews/MbaUser/_MbaUserLayout.cshtml";
+    var userName = ViewBag.UserName as string ?? "employee";
+    var role = ViewBag.UserRole as string ?? "MbaEmployee";
+    var letter = string.IsNullOrWhiteSpace(userName) ? "U" : userName.Substring(0, 1).ToUpperInvariant();
+    var avatarUrl = ViewBag.MbaAvatarUrl as string;
+}
+<section class="profile-page profile-employee">
+    <div class="container">
+        <div class="profile-page-heading">
+            <div>
+                <span class="profile-eyebrow">MY ACCOUNT</span>
+                <h1>Hồ sơ cá nhân</h1>
+                <p>Thông tin tài khoản và các khu vực chức năng được cấp cho nhân viên.</p>
+            </div>
+            <a asp-controller="MbaUser" asp-action="MbaIndex" class="btn btn-outline-primary"><i class="bi bi-arrow-left me-2"></i>Trang nhân viên</a>
+        </div>
+
+        @if (TempData["ProfileMessage"] != null) { <div class="alert alert-success">@TempData["ProfileMessage"]</div> }
+
+        <div class="profile-hero-card">
+            <div class="profile-identity">
+                <form id="avatarUploadForm" class="profile-avatar-form" asp-controller="MbaUser" asp-action="MbaUploadAvatar" method="post" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+                    <input id="avatar" name="avatar" type="file" class="visually-hidden" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" />
+                    <label for="avatar" class="profile-big-avatar profile-avatar-trigger" title="Nhấn để chọn ảnh đại diện từ máy tính" aria-label="Chọn ảnh đại diện">
+                        @if (!string.IsNullOrWhiteSpace(avatarUrl)) { <img id="avatarPreview" src="@avatarUrl" alt="Ảnh đại diện của @ViewBag.DisplayName" /> } else { <span id="avatarLetter">@letter</span> }
+                        <span class="profile-avatar-overlay"><i class="bi bi-camera-fill"></i><small>Đổi ảnh</small></span>
+                    </label>
+                </form>
+                <div>
+                    <span class="profile-status"><span></span> Đang hoạt động</span>
+                    <h2>@ViewBag.DisplayName</h2>
+                    <p><i class="bi bi-person-badge me-2"></i>@role · @userName</p>
+                    <span class="profile-avatar-hint"><i class="bi bi-camera me-1"></i> Nhấn vào ảnh để thay đổi</span>
+                </div>
+            </div>
+            <div class="profile-hero-note">
+                <i class="bi bi-person-workspace"></i>
+                <div><strong>Tài khoản nhân viên</strong><span>Quyền truy cập tập trung vào tra cứu, xem và hỗ trợ rà soát dữ liệu sản phẩm.</span></div>
+            </div>
+        </div>
+
+        <script>
+            (function () {
+                const input = document.getElementById('avatar');
+                const form = document.getElementById('avatarUploadForm');
+                const trigger = document.querySelector('.profile-avatar-trigger');
+                const preview = document.getElementById('avatarPreview');
+                const letter = document.getElementById('avatarLetter');
+
+                input?.addEventListener('change', function () {
+                    const file = this.files && this.files[0];
+                    if (!file) return;
+
+                    const allowed = ['image/jpeg', 'image/png', 'image/webp'];
+                    if (!allowed.includes(file.type) || file.size > 2 * 1024 * 1024) {
+                        this.value = '';
+                        alert('Ảnh phải có định dạng JPG, JPEG, PNG hoặc WEBP và dung lượng không quá 2 MB.');
+                        return;
+                    }
+
+                    if (file.type.startsWith('image/')) {
+                        const url = URL.createObjectURL(file);
+                        if (preview) {
+                            preview.src = url;
+                        } else {
+                            const img = document.createElement('img');
+                            img.id = 'avatarPreview';
+                            img.alt = 'Ảnh đại diện mới';
+                            img.src = url;
+                            letter?.replaceWith(img);
+                        }
+                    }
+
+                    trigger?.classList.add('is-uploading');
+                    form?.submit();
+                });
+            })();
+        </script>
+
+        <div class="profile-grid">
+            <section class="profile-panel">
+                <div class="profile-panel-heading">
+                    <div class="profile-panel-icon"><i class="bi bi-person-vcard"></i></div>
+                    <div><h3>Thông tin tài khoản</h3><p>Thông tin nhận diện của tài khoản hiện tại.</p></div>
+                </div>
+                <div class="profile-details">
+                    <div class="profile-detail"><span>Tên tài khoản</span><strong>@ViewBag.DisplayName</strong></div>
+                    <div class="profile-detail"><span>Vai trò</span><strong>@role</strong></div>
+                    <div class="profile-detail"><span>Trạng thái</span><strong class="detail-success"><i class="bi bi-check-circle-fill"></i> Đang hoạt động</strong></div>
+                    <div class="profile-detail"><span>MbaEmail</span><strong class="@(string.IsNullOrWhiteSpace(ViewBag.MbaEmail as string) ? "detail-muted" : "")">@(string.IsNullOrWhiteSpace(ViewBag.MbaEmail as string) ? "Chưa cập nhật" : ViewBag.MbaEmail)</strong></div>
+                    <div class="profile-detail"><span>Số điện thoại</span><strong class="@(string.IsNullOrWhiteSpace(ViewBag.MbaPhone as string) ? "detail-muted" : "")">@(string.IsNullOrWhiteSpace(ViewBag.MbaPhone as string) ? "Chưa cập nhật" : ViewBag.MbaPhone)</strong></div>
+                    <div class="profile-detail"><span>Phiên đăng nhập</span><strong class="detail-success">Hiện tại</strong></div>
+                </div>
+            </section>
+
+            <section class="profile-panel">
+                <div class="profile-panel-heading">
+                    <div class="profile-panel-icon"><i class="bi bi-grid-1x2"></i></div>
+                    <div><h3>Khu vực của tôi</h3><p>Các chức năng chính dành cho nhân viên.</p></div>
+                </div>
+                <div class="profile-action-list">
+                    <a class="profile-action" asp-controller="MbaUser" asp-action="MbaIndex"><span class="action-icon"><i class="bi bi-search"></i></span><span><strong>Tra cứu sản phẩm</strong><small>Xem danh sách và thông tin sản phẩm.</small></span><i class="bi bi-chevron-right"></i></a>
+                    <a class="profile-action" href="/MbaUser/MbaIndex#product-list"><span class="action-icon"><i class="bi bi-box-seam"></i></span><span><strong>Danh sách sản phẩm</strong><small>Truy cập cơ sở dữ liệu sản phẩm.</small></span><i class="bi bi-chevron-right"></i></a>
+                    <a class="profile-action" href="/MbaUser/MbaIndex#categories"><span class="action-icon"><i class="bi bi-tags"></i></span><span><strong>Danh mục sản phẩm</strong><small>Xem các nhóm linh kiện máy tính.</small></span><i class="bi bi-chevron-right"></i></a>
+                </div>
+            </section>
+        </div>
+
+        <section class="profile-panel profile-security-panel">
+            <div class="profile-panel-heading">
+                <div class="profile-panel-icon"><i class="bi bi-shield-lock"></i></div>
+                <div><h3>Bảo mật tài khoản</h3><p>Quản lý phiên đăng nhập hiện tại.</p></div>
+            </div>
+            <div class="security-row">
+                <div><strong><i class="bi bi-shield-check me-2"></i>Phiên đăng nhập hiện tại</strong><span>Phiên đang được duy trì trên thiết bị này.</span></div>
+                <form asp-controller="MbaAccount" asp-action="MbaLogout" method="post">@Html.AntiForgeryToken()<button type="submit" class="btn btn-outline-danger"><i class="bi bi-box-arrow-right me-2"></i>Đăng xuất</button></form>
+            </div>
+        </section>
+    </div>
+</section>

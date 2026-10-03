@@ -1,0 +1,26 @@
+@{
+    ViewData["Title"] = "Trang chủ";
+    Layout = "~/MbaViews/MbaUser/_MbaUserLayout.cshtml";
+}
+<section class="hero-section user-home-hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-7">
+                <span class="hero-label"><i class="bi bi-clipboard2-check me-2"></i>EMPLOYEE WORKSPACE</span>
+                <h1>Rà soát và chuẩn hóa <span>dữ liệu sản phẩm</span></h1>
+                <p>Khu vực làm việc của nhân viên: nhận phiếu từ quản lý, đối chiếu dữ liệu, nhập/sửa thông tin và hoàn tất checklist.</p>
+                <div class="hero-actions"><a asp-action="MbaReview" class="btn btn-primary"><i class="bi bi-list-check me-2"></i>Mở danh sách rà soát</a><a asp-action="MbaProfile" class="btn btn-outline-primary ms-2"><i class="bi bi-person me-2"></i>Hồ sơ</a></div>
+            </div><div class="col-lg-5 text-center mt-4 mt-lg-0"><div class="hero-icon"><i class="bi bi-clipboard2-data"></i></div></div>
+        </div>
+    </div>
+</section>
+<section class="home-shortcuts">
+    <div class="container">
+        <div class="section-heading"><span>WORK QUEUE</span><h2>Công việc hiện tại</h2><p>Theo dõi tiến độ xử lý dữ liệu được giao.</p></div>
+        <div class="row g-4">
+            <div class="col-md-4"><a class="home-feature-card" asp-action="MbaReview"><span class="home-feature-icon"><i class="bi bi-hourglass-split"></i></span><span><strong>Chờ rà soát</strong><small>@ViewBag.Pending phiếu đang chờ xử lý.</small></span><i class="bi bi-arrow-right"></i></a></div>
+            <div class="col-md-4"><a class="home-feature-card" asp-action="MbaReview" asp-route-status="Đang xử lý"><span class="home-feature-icon"><i class="bi bi-pencil-square"></i></span><span><strong>Đang xử lý</strong><small>@ViewBag.Working phiếu đang được nhập/sửa.</small></span><i class="bi bi-arrow-right"></i></a></div>
+            <div class="col-md-4"><a class="home-feature-card" asp-action="MbaReview" asp-route-status="Đã hoàn tất"><span class="home-feature-icon"><i class="bi bi-check2-circle"></i></span><span><strong>Đã hoàn tất</strong><small>@ViewBag.Completed phiếu đã hoàn thành.</small></span><i class="bi bi-arrow-right"></i></a></div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,23 @@
+@model MBA_PC_ProductManagement.MbaModels.MbaEmployeeCreateViewModel
+@{ ViewData["Title"] = "Thêm nhân viên"; }
+<div class="dashboard-page">
+    <div class="page-heading">
+        <div><span class="profile-eyebrow">ACCOUNT MANAGEMENT</span><h1 class="page-title">Tạo tài khoản nhân viên</h1><p class="page-description">Mỗi nhân viên sử dụng một tài khoản riêng để hệ thống xác định người xử lý phiếu.</p></div>
+        <a asp-action="MbaEmployees" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Danh sách nhân viên</a>
+    </div>
+    <div class="content-card" style="max-width:760px">
+        <form asp-action="MbaCreateEmployee" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+            <div class="row g-3">
+                <div class="col-md-6"><label asp-for="MbaUsername" class="form-label">Tên tài khoản</label><input asp-for="MbaUsername" class="form-control" autocomplete="username" /><span asp-validation-for="MbaUsername" class="text-danger"></span></div>
+                <div class="col-md-6"><label asp-for="Password" class="form-label">Mật khẩu</label><input asp-for="Password" type="password" class="form-control" autocomplete="new-password" /><span asp-validation-for="Password" class="text-danger"></span></div>
+                <div class="col-12"><label asp-for="MbaFullName" class="form-label">Họ và tên</label><input asp-for="MbaFullName" class="form-control" /></div>
+                <div class="col-md-6"><label asp-for="MbaEmail" class="form-label">MbaEmail</label><input asp-for="MbaEmail" class="form-control" /></div>
+                <div class="col-md-6"><label asp-for="MbaPhone" class="form-label">Số điện thoại</label><input asp-for="MbaPhone" class="form-control" /></div>
+            </div>
+            <div class="mt-4"><button type="submit" class="btn btn-primary"><i class="bi bi-person-plus me-1"></i>Tạo tài khoản</button></div>
+        </form>
+    </div>
+</div>
+@section Scripts { <partial name="_MbaValidationScriptsPartial" /> }

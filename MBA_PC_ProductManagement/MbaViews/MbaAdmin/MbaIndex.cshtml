@@ -1,0 +1,108 @@
+@model IEnumerable<MBA_PC_ProductManagement.MbaModels.MbaProduct>
+@using MBA_PC_ProductManagement.MbaControllers
+@{
+    ViewData["Title"] = "Dashboard";
+    var attentionRows = ViewBag.AttentionRows as IEnumerable<MbaAdminCheckRow> ?? Enumerable.Empty<MbaAdminCheckRow>();
+    var completedPercent = (int)(ViewBag.CompletedPercent ?? 0);
+    var totalReviews = (int)(ViewBag.TotalReviews ?? 0);
+}
+<div class="dashboard-page">
+    <div class="dashboard-hero">
+        <div>
+            <span class="profile-eyebrow">ADMIN DASHBOARD</span>
+            <h1 class="page-title">Trung tâm điều phối dữ liệu</h1>
+            <p class="page-description">Theo dõi tình trạng dữ liệu, tiến độ rà soát và các phiếu cần được xử lý trong hệ thống.</p>
+        </div>
+        <div class="dashboard-hero-actions">
+            <a asp-controller="MbaAdmin" asp-action="MbaReviewData" class="btn btn-outline-primary"><i class="bi bi-clipboard-check me-1"></i>Kiểm tra dữ liệu</a>
+            <a asp-controller="MbaProducts" asp-action="MbaCreate" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i>Thêm sản phẩm</a>
+        </div>
+    </div>
+
+    <div class="dashboard-stat-grid">
+        <a asp-controller="MbaProducts" asp-action="MbaIndex" class="dashboard-stat-card">
+            <span class="dashboard-stat-icon blue"><i class="bi bi-box-seam"></i></span>
+            <span class="dashboard-stat-content"><small>Tổng sản phẩm</small><strong>@ViewBag.ProductCount</strong><em>Dữ liệu nền</em></span>
+            <i class="bi bi-arrow-up-right dashboard-stat-arrow"></i>
+        </a>
+        <a asp-controller="MbaAdmin" asp-action="MbaReviewData" class="dashboard-stat-card">
+            <span class="dashboard-stat-icon orange"><i class="bi bi-hourglass-split"></i></span>
+            <span class="dashboard-stat-content"><small>Chờ rà soát</small><strong>@ViewBag.PendingCount</strong><em>Cần được kiểm tra</em></span>
+            <i class="bi bi-arrow-up-right dashboard-stat-arrow"></i>
+        </a>
+        <a asp-controller="MbaAdmin" asp-action="MbaReviewData" class="dashboard-stat-card">
+            <span class="dashboard-stat-icon violet"><i class="bi bi-pencil-square"></i></span>
+            <span class="dashboard-stat-content"><small>Đang xử lý</small><strong>@ViewBag.ReviewingCount</strong><em>Nhân viên đang thực hiện</em></span>
+            <i class="bi bi-arrow-up-right dashboard-stat-arrow"></i>
+        </a>
+        <a asp-controller="MbaAdmin" asp-action="MbaInvalidData" class="dashboard-stat-card">
+            <span class="dashboard-stat-icon red"><i class="bi bi-exclamation-triangle"></i></span>
+            <span class="dashboard-stat-content"><small>Cần báo lại</small><strong>@ViewBag.InvalidCount</strong><em>Cần quản lý kiểm tra</em></span>
+            <i class="bi bi-arrow-up-right dashboard-stat-arrow"></i>
+        </a>
+    </div>
+
+    <div class="dashboard-main-grid">
+        <section class="content-card dashboard-progress-card">
+            <div class="content-card-header">
+                <div><h5>Tiến độ chuẩn hóa</h5><p>Tiến độ xử lý toàn bộ phiếu trong hệ thống.</p></div>
+                <span class="dashboard-percent">@completedPercent%</span>
+            </div>
+            <div class="progress-track"><span style="width:@completedPercent%"></span></div>
+            <div class="progress-summary">
+                <div><strong>@ViewBag.CompletedCount / @totalReviews</strong><span>phiếu đã hoàn tất</span></div>
+                <div><strong>@ViewBag.ReviewingCount</strong><span>đang xử lý</span></div>
+                <div><strong>@ViewBag.PendingCount</strong><span>chờ rà soát</span></div>
+            </div>
+            <div class="progress-note"><i class="bi bi-info-circle"></i><span>MbaAdmin theo dõi kết quả sau khi nhân viên đối chiếu dữ liệu từ phiếu giấy.</span></div>
+        </section>
+
+        <section class="content-card dashboard-status-card">
+            <div class="content-card-header"><div><h5>Tình trạng dữ liệu</h5><p>Phân bố phiếu theo trạng thái.</p></div></div>
+            <div class="status-overview-list">
+                <a asp-controller="MbaAdmin" asp-action="MbaReviewData" class="status-overview-item"><span class="status-dot pending"></span><span>Chờ rà soát</span><strong>@ViewBag.PendingCount</strong></a>
+                <a asp-controller="MbaAdmin" asp-action="MbaReviewData" class="status-overview-item"><span class="status-dot working"></span><span>Đang xử lý</span><strong>@ViewBag.ReviewingCount</strong></a>
+                <a asp-controller="MbaAdmin" asp-action="MbaStandardizeData" class="status-overview-item"><span class="status-dot valid"></span><span>Đã hoàn tất</span><strong>@ViewBag.CompletedCount</strong></a>
+                <a asp-controller="MbaAdmin" asp-action="MbaInvalidData" class="status-overview-item"><span class="status-dot invalid"></span><span>Cần báo lại</span><strong>@ViewBag.InvalidCount</strong></a>
+            </div>
+        </section>
+    </div>
+
+    <div class="dashboard-lower-grid">
+        <section class="content-card dashboard-attention-card">
+            <div class="content-card-header">
+                <div><h5>Phiếu cần quan tâm</h5><p>Các bản ghi chưa hoàn tất hoặc cần xử lý lại.</p></div>
+                <a asp-controller="MbaAdmin" asp-action="MbaReviewData" class="view-all-link">Xem tất cả <i class="bi bi-arrow-right"></i></a>
+            </div>
+            @if (!attentionRows.Any())
+            {
+                <div class="dashboard-empty"><i class="bi bi-check-circle"></i><strong>Tất cả phiếu đã hoàn tất</strong><span>Hiện không có dữ liệu cần xử lý.</span></div>
+            }
+            else
+            {
+                <div class="dashboard-attention-list">
+                @foreach (var row in attentionRows)
+                {
+                    var statusClass = row.MbaReview.MbaStatus == "Cần báo lại" ? "invalid" : row.MbaReview.MbaStatus == "Đang xử lý" ? "working" : "pending";
+                    <div class="attention-row">
+                        <div class="attention-product-icon"><i class="bi bi-box-seam"></i></div>
+                        <div class="attention-product"><strong>@row.MbaProduct.MbaCode · @row.MbaProduct.MbaName</strong><small>@row.MbaProduct.MbaCategory · @row.MbaProduct.MbaBrand</small></div>
+                        <span class="attention-status @statusClass">@row.MbaReview.MbaStatus</span>
+                        <a asp-controller="MbaProducts" asp-action="MbaDetails" asp-route-id="@row.MbaProduct.MbaId" class="attention-action" title="Xem chi tiết"><i class="bi bi-chevron-right"></i></a>
+                    </div>
+                }
+                </div>
+            }
+        </section>
+
+        <section class="content-card dashboard-quick-card">
+            <div class="content-card-header"><div><h5>Truy cập nhanh</h5><p>Các khu vực quản lý thường dùng.</p></div></div>
+            <div class="dashboard-quick-list">
+                <a asp-controller="MbaAdmin" asp-action="MbaReviewData" class="dashboard-quick-item"><span class="quick-icon blue"><i class="bi bi-clipboard-check"></i></span><span><strong>Rà soát dữ liệu</strong><small>Mở các phiếu chờ xử lý</small></span><i class="bi bi-chevron-right"></i></a>
+                <a asp-controller="MbaAdmin" asp-action="MbaStandardizeData" class="dashboard-quick-item"><span class="quick-icon green"><i class="bi bi-check2-square"></i></span><span><strong>Chuẩn hóa dữ liệu</strong><small>Kiểm tra bản ghi đã hoàn tất</small></span><i class="bi bi-chevron-right"></i></a>
+                <a asp-controller="MbaAdmin" asp-action="MbaInvalidData" class="dashboard-quick-item"><span class="quick-icon red"><i class="bi bi-exclamation-triangle"></i></span><span><strong>Dữ liệu không hợp lệ</strong><small>Xử lý các phiếu cần báo lại</small></span><i class="bi bi-chevron-right"></i></a>
+                <a asp-controller="MbaCategories" asp-action="MbaIndex" class="dashboard-quick-item"><span class="quick-icon violet"><i class="bi bi-tags"></i></span><span><strong>Danh mục sản phẩm</strong><small>@ViewBag.CategoryCount danh mục đang quản lý</small></span><i class="bi bi-chevron-right"></i></a>
+            </div>
+        </section>
+    </div>
+</div>
